@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>谢逸 ❤️</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #ffd1d1 0%, #ffe0f0 30%, #fde2e9 60%, #fce4ec 100%);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .name {
+    font-size: 120px;
+    font-weight: 900;
+    color: #e91e63;
+    text-shadow: 0 4px 20px rgba(233, 30, 99, 0.3), 0 0 80px rgba(233, 30, 99, 0.15);
+    letter-spacing: 20px;
+    animation: pulse 2s ease-in-out infinite;
+    transition: transform 0.1s;
+    position: relative;
+    z-index: 10;
+  }
+
+  .name:active {
+    transform: scale(0.92);
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 60px;
+    font-size: 18px;
+    color: #e91e63;
+    opacity: 0.6;
+    letter-spacing: 4px;
+    animation: fadeHint 2.5s ease-in-out infinite;
+    z-index: 10;
+  }
+
+  @keyframes fadeHint {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  .heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 100;
+    animation: floatUp var(--dur) ease-out forwards;
+    font-size: var(--size);
+  }
+
+  @keyframes floatUp {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(0.3) rotate(0deg);
+    }
+    30% {
+      opacity: 1;
+      transform: translate(var(--dx30), var(--dy30)) scale(1.1) rotate(var(--r30));
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx100), var(--dy100)) scale(0.2) rotate(var(--r100));
+    }
+  }
+
+  .spark {
+    position: fixed;
+    pointer-events: none;
+    z-index: 99;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: var(--color);
+    animation: sparkUp var(--dur) ease-out forwards;
+  }
+
+  @keyframes sparkUp {
+    0% {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(var(--dx), var(--dy)) scale(0);
+    }
+  }
+
+  .counter {
+    position: fixed;
+    top: 40px;
+    right: 50px;
+    font-size: 16px;
+    color: #e91e63;
+    opacity: 0;
+    transition: opacity 0.5s;
+    z-index: 10;
+    letter-spacing: 2px;
+  }
+
+  .counter.show {
+    opacity: 0.5;
+  }
+
+  .trail {
+    position: fixed;
+    pointer-events: none;
+    z-index: 50;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(233,30,99,0.6) 0%, transparent 70%);
+    animation: trailFade 0.6s ease-out forwards;
+  }
+
+  @keyframes trailFade {
+    0% { opacity: 1; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="name" id="name">谢 逸</div>
+<div class="hint">— 点 我 —</div>
+<div class="counter" id="counter">💖 × 0</div>
+
+<script>
+  const nameEl = document.getElementById('name');
+  const counterEl = document.getElementById('counter');
+  let heartCount = 0;
+
+  const hearts = ['❤️', '💕', '💖', '💗', '💘', '💝', '💓', '🩷', '♥️', '💞'];
+
+  function rand(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function randInt(min, max) {
+    return Math.floor(rand(min, max + 1));
+  }
+
+  function spawnTrail(x, y) {
+    const dot = document.createElement('div');
+    dot.className = 'trail';
+    dot.style.left = x + 'px';
+    dot.style.top = y + 'px';
+    document.body.appendChild(dot);
+    setTimeout(() => dot.remove(), 600);
+  }
+
+  function spawnSpark(x, y) {
+    const spark = document.createElement('div');
+    spark.className = 'spark';
+    const size = rand(3, 7);
+    spark.style.setProperty('--size', size + 'px');
+    spark.style.setProperty('--color', ['#e91e63', '#f06292', '#ff80ab', '#ff4081', '#f48fb1'][randInt(0, 4)]);
+    spark.style.setProperty('--dx', rand(-60, 60) + 'px');
+    spark.style.setProperty('--dy', rand(-60, 60) + 'px');
+    spark.style.setProperty('--dur', rand(0.4, 0.8) + 's');
+    spark.style.left = x + 'px';
+    spark.style.top = y + 'px';
+    document.body.appendChild(spark);
+    setTimeout(() => spark.remove(), 800);
+  }
+
+  function spawnHeart(x, y) {
+    const heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.textContent = hearts[randInt(0, hearts.length - 1)];
+
+    const size = rand(28, 70);
+    const dx = rand(-120, 120);
+    const dyUp = rand(-250, -100);
+    const dur = rand(1.2, 2.4);
+
+    heart.style.setProperty('--size', size + 'px');
+    heart.style.setProperty('--dx30', (dx * 0.3) + 'px');
+    heart.style.setProperty('--dy30', (dyUp * 0.4) + 'px');
+    heart.style.setProperty('--dx100', dx + 'px');
+    heart.style.setProperty('--dy100', dyUp + 'px');
+    heart.style.setProperty('--r30', rand(-40, 40) + 'deg');
+    heart.style.setProperty('--r100', rand(-60, 60) + 'deg');
+    heart.style.setProperty('--dur', dur + 's');
+    heart.style.left = x + 'px';
+    heart.style.top = y + 'px';
+
+    document.body.appendChild(heart);
+
+    heartCount++;
+    counterEl.textContent = '💖 × ' + heartCount;
+    counterEl.classList.add('show');
+
+    setTimeout(() => heart.remove(), dur * 1000);
+  }
+
+  function burst(x, y) {
+    const n = randInt(5, 9);
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => spawnHeart(x + rand(-10, 10), y + rand(-10, 10)), rand(0, 80));
+    }
+    const m = randInt(8, 14);
+    for (let i = 0; i < m; i++) {
+      setTimeout(() => spawnSpark(x + rand(-8, 8), y + rand(-8, 8)), rand(0, 50));
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    spawnTrail(e.clientX, e.clientY);
+    burst(e.clientX, e.clientY);
+  });
+
+  let lastTrail = 0;
+  document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastTrail > 40) {
+      spawnTrail(e.clientX, e.clientY);
+      lastTrail = now;
+    }
+  });
+
+  document.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const t = e.touches[0];
+    burst(t.clientX, t.clientY);
+  }, { passive: false });
+</script>
+
+</body>
+</html>
